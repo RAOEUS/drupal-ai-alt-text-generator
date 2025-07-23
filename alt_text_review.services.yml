@@ -1,0 +1,4 @@
+services:
+  alt_text_review.alt_text_generator:
+    class: Drupal\alt_text_review\Service\AltTextGenerator
+    arguments: ['@http_client', '@config.factory', '@image.factory', '@file_system', '@logger.factory']

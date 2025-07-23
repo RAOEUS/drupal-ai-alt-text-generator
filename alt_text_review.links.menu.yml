@@ -1,0 +1,13 @@
+alt_text_review.settings:
+  title: 'Alt Text Review Configuration'
+  description: 'Configure Alt Text Review settings'
+  parent: system.admin_config_media
+  route_name: alt_text_review.settings
+  weight: 100
+
+alt_text_review.review:
+  title: 'Alt Text Review'
+  description: 'Review AI-generated alt text for images'
+  parent: system.admin_config_media
+  route_name: alt_text_review.review
+  weight: 100

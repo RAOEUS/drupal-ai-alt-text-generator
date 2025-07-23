@@ -1,0 +1,15 @@
+alt_text_review.review:
+  path: '/admin/content/media/alt-text-review'
+  defaults:
+    _controller: '\Drupal\alt_text_review\Controller\AltTextReviewController::review'
+    _title: 'Review Alt Text'
+  requirements:
+    _permission: 'access alt text review'
+
+alt_text_review.settings:
+  path: '/admin/config/media/alt-text-review'
+  defaults:
+    _form: '\Drupal\alt_text_review\Form\AltTextReviewSettingsForm'
+    _title: 'Alt Text Review Settings'
+  requirements:
+    _permission: 'access alt text review'

@@ -1,0 +1,5 @@
+name: 'Alt Text Review'
+type: module
+description: 'Provides AI-generated alt text suggestions for images without alt text in the media library and allows human review.'
+core_version_requirement: '^10'
+package: Media
