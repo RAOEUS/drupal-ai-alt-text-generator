@@ -21,12 +21,6 @@
         "branch-alias": {
             "dev-main": "1.x-dev"
         }
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/RAOEUS/drupal-ai-alt-text-generator"
-        }
-    ]
+    }
 }
 

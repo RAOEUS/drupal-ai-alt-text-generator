@@ -11,12 +11,47 @@ Provides AI‑generated alt text suggestions for images without alt text in the 
 
 ## Installation
 
-1. Copy the `alt_text_review` folder into your `modules/contrib` directory.  
-2. Enable the module:
+### 1. Via Composer (recommended)
+
+1. In your Drupal site’s root `composer.json`, add the repository entry:
+   ```json
+   {
+     "repositories": [
+       {
+         "type": "vcs",
+         "url": "https://github.com/RAOEUS/drupal-ai-alt-text-generator"
+       }
+     ]
+   }
+
+2. Require the module:
+
+   ```bash
+   composer require raoeus/drupal-ai-alt-text-generator:^1.0
+   ```
+3. The module will be installed into `web/modules/contrib/alt_text_review/`.
+4. Enable the module and clear caches:
+
    ```bash
    drush en alt_text_review -y
+   drush cr
+   ```
+5. Assign the **Access Alt Text Review UI** permission to the appropriate roles.
 
-3. Assign the **Access Alt Text Review UI** permission to the roles that should be able to review and save alt text.
+### 2. Manual Install
+
+1. Clone or download this repository into your Drupal installation:
+
+   ```bash
+   git clone https://github.com/RAOEUS/drupal-ai-alt-text-generator.git web/modules/contrib/alt_text_review
+   ```
+2. Enable the module and clear caches:
+
+   ```bash
+   drush en alt_text_review -y
+   drush cr
+   ```
+3. Assign the **Access Alt Text Review UI** permission to the appropriate roles.
 
 ## Configuration
 
@@ -57,7 +92,19 @@ Go to **Content » Media » Review Alt Text** (`/admin/content/media/alt-text-re
    Sends a Chat Completion request to `https://api.openai.com/v1/chat/completions` with:
 
    * **model**: `gpt-4o-mini`
-   * **messages**: `[ { role: "user", content: [ { type: "text", text: prompt }, { type: "image_url", image_url: { url: dataUri } } ] } ]`
+   * **messages**:
+
+     ```json
+     [
+       {
+         "role": "user",
+         "content": [
+           { "type": "text",  "text": "Your prompt here" },
+           { "type": "image_url", "image_url": { "url": "data:image/..." } }
+         ]
+       }
+     ]
+     ```
    * **max\_tokens**: calculated from your max length.
 6. **Error Handling**
 
@@ -72,7 +119,7 @@ Go to **Content » Media » Review Alt Text** (`/admin/content/media/alt-text-re
 This module uses **GPT‑4o mini**, priced at:
 
 * **\$0.15 per 1 M input tokens**
-* **\$0.60 per 1 M output tokens** ([OpenAI][1], [Reuters][2])
+* **\$0.60 per 1 M output tokens**
 
 Because images are downscaled to 800×800 px, a typical JPEG (\~50 KB) yields about 68 000 base64 characters (≈17 000 tokens). With a 32‑token response, the cost per image is:
 
@@ -84,6 +131,6 @@ Total ≈ $0.00257 per image
 
 > To further reduce cost, you can lower the downscale dimensions or adjust JPEG quality via your image styles.
 
-[1]: https://openai.com/index/gpt-4o-mini-advancing-cost-efficient-intelligence/?utm_source=chatgpt.com "GPT-4o mini: advancing cost-efficient intelligence - OpenAI"
-[2]: https://www.reuters.com/technology/artificial-intelligence/openai-unveils-cheaper-small-ai-model-gpt-4o-mini-2024-07-18/?utm_source=chatgpt.com "OpenAI unveils cheaper small AI model GPT-4o mini"
+## License
 
+GPL‑2.0 or later.
