@@ -70,7 +70,7 @@ Visit **Configuration » Media » Alt Text Review Settings** (`/admin/config/med
 
 ## Usage
 
-Go to **Content » Media » Review Alt Text** (`/admin/content/media/alt-text-review`):
+Go to **Configuration » Media » Review Alt Text** (`/admin/content/media/alt-text-review`):
 
 1. The module queries for the first media item of type **Image** where `field_media_image.alt` is empty or NULL.
 2. It **automatically downscales** the image to fit within an 800 × 800 px box (preserving aspect ratio) to limit payload size.
