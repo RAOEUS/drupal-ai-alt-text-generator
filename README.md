@@ -17,20 +17,42 @@ Provides AI-generated alt text suggestions for images without alt text in the me
 
 ## Installation
 
-Installation is the same regardless of the chosen API provider.
-
 ### 1\. Via Composer (recommended)
 
-1.  Require the module using Composer:
-    ```bash
-    composer require drupal/alt_text_review
+Since this module is not yet on Drupal.org, you first need to add its GitHub repository to your project's `composer.json` file.
+
+1.  **Add the repository to `composer.json`**:
+    In your Drupal project's root `composer.json` file, add the following inside the `repositories` section:
+
+    ```json
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/RAOEUS/drupal-ai-alt-text-generator"
+        }
+    ]
     ```
-2.  Enable the module and clear caches:
+
+2.  **Require the module**:
+    Now you can require the module using its name from the repository. It's recommended to specify a version constraint.
+
+    ```bash
+    composer require raoeus/drupal-ai-alt-text-generator:^1.0
+    ```
+
+3.  **Enable the module**:
+
     ```bash
     drush en alt_text_review -y
     drush cr
     ```
-3.  Assign the **Access Alt Text Review UI** permission to the appropriate roles.
+
+4.  **Assign permissions**:
+    Assign the **Access Alt Text Review UI** permission to the appropriate roles.
 
 ### 2\. Manual Install
 
