@@ -2,6 +2,8 @@
 
 Provides AI‑generated alt text suggestions for images without alt text in the media library, with a human review workflow.
 
+![Example of alt text review page](inc/img/example.jpg)
+
 ## Requirements
 
 - Drupal 10  
