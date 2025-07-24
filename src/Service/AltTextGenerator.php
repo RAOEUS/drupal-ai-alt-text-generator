@@ -34,8 +34,8 @@ class AltTextGenerator
     }
     $image_data = file_get_contents($image_uri);
     $base64 = base64_encode($image_data);
-    $max_length = $config->get('alt_text_max_length') ?? 128;
-    $prompt_template = $config->get('ai_prompt') ?? 'Provide a literal description of what is visible in this image. Do not add any interpretation. List the subjects and objects in this image. Do not name people or locations. Use [max_length] characters maximum.';
+    $max_length = $config->get('alt_text_max_length') ?? 512;
+    $prompt_template = $config->get('ai_prompt') ?? 'Provide a literal description of what is visible in this image. Do not add any interpretation or names. Please limit to [max_length] characters.';
     $prompt_text = str_replace('[max_length]', $max_length, $prompt_template);
     if ($api_provider === 'ollama') {
       return $this->generateWithOllama($base64, $prompt_text, $config, $debug_mode);
@@ -107,7 +107,7 @@ class AltTextGenerator
       return 'Error: OpenAI API key is not configured.';
     }
     $data_uri = 'data:' . $mime_type . ';base64,' . $base64;
-    $max_length = $config->get('alt_text_max_length') ?? 128;
+    $max_length = $config->get('alt_text_max_length') ?? 512;
     $max_tokens = (int) ceil($max_length / 4);
     $request_options = [
       'headers' => [

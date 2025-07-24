@@ -97,7 +97,7 @@ class AltTextReviewSettingsForm extends ConfigFormBase
       '#type' => 'textarea',
       '#title' => $this->t('AI Prompt'),
       '#description' => $this->t('The prompt sent to the AI. Use the token <code>[max_length]</code> to dynamically include the max character length setting below.'),
-      '#default_value' => $config->get('ai_prompt') ?? 'Provide a literal description of what is visible in this image. Do not add any interpretation or names.',
+      '#default_value' => $config->get('ai_prompt') ?? 'Provide a literal description of what is visible in this image. Do not add any interpretation or names. Please limit to [max_length] characters.',
       '#rows' => 3,
       '#required' => TRUE,
     ];
@@ -105,7 +105,7 @@ class AltTextReviewSettingsForm extends ConfigFormBase
       '#type' => 'number',
       '#title' => $this->t('Alt text maximum character length'),
       '#description' => $this->t('The value that will replace the [max_length] token in the prompt.'),
-      '#default_value' => $config->get('alt_text_max_length') ?? 128,
+      '#default_value' => $config->get('alt_text_max_length') ?? 512,
       '#min' => 50,
       '#required' => TRUE,
     ];
