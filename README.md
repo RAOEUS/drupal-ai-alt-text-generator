@@ -49,7 +49,7 @@ Visit **Configuration » Media » Alt Text Review Configuration** (`/admin/confi
   * **Ollama Hostname**: The address for your local Ollama instance (defaults to `http://localhost:11434`).
   * **Ollama Model**: The name of the installed vision model to use (e.g., `llava:13b`).
   * **AI Prompt**: A template for the AI. The token `[max_length]` is replaced by your max-length setting.
-  * **Alt text maximum character length**: An integer value (default 128).
+  * **Alt text maximum character length**: An integer value (default 512).
   * **Enable debug logging**: Logs full request/response payloads to the Drupal logs.
 
 -----
