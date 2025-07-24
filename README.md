@@ -1,138 +1,102 @@
 # Drupal AI Alt Text Generator Module
 
-Provides AI‑generated alt text suggestions for images without alt text in the media library, with a human review workflow.
+Provides AI-generated alt text suggestions for images without alt text in the media library, with a human review workflow. Supports both the cloud-based **OpenAI API** and a self-hosted **Ollama** instance.
 
-![Example of alt text review page](inc/img/example.jpg)
+-----
 
 ## Requirements
 
-- Drupal 10  
-- PHP 7.4 or higher  
-- PHP extensions: cURL, GD or Imagick  
-- OpenAI API key  
+  * Drupal 10
+  * PHP 7.4 or higher
+  * PHP extensions: cURL, GD or Imagick
+  * **An API Provider:**
+      * **Option 1 (Cloud):** An OpenAI API key.
+      * **Option 2 (Local):** A running [Ollama](https://ollama.com/) instance with a suitable vision model pulled (e.g., `ollama pull llava:13b`).
+
+-----
 
 ## Installation
 
-### 1. Via Composer (recommended)
+Installation is the same regardless of the chosen API provider.
 
-1. In your Drupal site’s root `composer.json`, add the repository entry:
-   ```json
-   {
-     "repositories": [
-       {
-         "type": "vcs",
-         "url": "https://github.com/RAOEUS/drupal-ai-alt-text-generator"
-       }
-     ]
-   }
+### 1\. Via Composer (recommended)
 
-2. Require the module:
+1.  Require the module using Composer:
+    ```bash
+    composer require drupal/alt_text_review
+    ```
+2.  Enable the module and clear caches:
+    ```bash
+    drush en alt_text_review -y
+    drush cr
+    ```
+3.  Assign the **Access Alt Text Review UI** permission to the appropriate roles.
 
-   ```bash
-   composer require raoeus/drupal-ai-alt-text-generator:^1.0
-   ```
-3. The module will be installed into `web/modules/contrib/alt_text_review/`.
-4. Enable the module and clear caches:
+### 2\. Manual Install
 
-   ```bash
-   drush en alt_text_review -y
-   drush cr
-   ```
-5. Assign the **Access Alt Text Review UI** permission to the appropriate roles.
+1.  Clone this repository into `web/modules/contrib/alt_text_review`.
+2.  Enable the module and clear caches.
+3.  Assign the **Access Alt Text Review UI** permission.
 
-### 2. Manual Install
-
-1. Clone or download this repository into your Drupal installation:
-
-   ```bash
-   git clone https://github.com/RAOEUS/drupal-ai-alt-text-generator.git web/modules/contrib/alt_text_review
-   ```
-2. Enable the module and clear caches:
-
-   ```bash
-   drush en alt_text_review -y
-   drush cr
-   ```
-3. Assign the **Access Alt Text Review UI** permission to the appropriate roles.
+-----
 
 ## Configuration
 
 Visit **Configuration » Media » Alt Text Review Configuration** (`/admin/config/media/alt-text-review`) and configure:
 
-* **OpenAI API key**
-* **AI Prompt**
+  * **API Provider**: Choose between **OpenAI** (cloud-based) or **Ollama** (self-hosted).
+  * **OpenAI API key**: Required only if you select OpenAI.
+  * **Ollama Hostname**: The address for your local Ollama instance (defaults to `http://localhost:11434`).
+  * **Ollama Model**: The name of the installed vision model to use (e.g., `llava:13b`).
+  * **AI Prompt**: A template for the AI. The token `[max_length]` is replaced by your max-length setting.
+  * **Alt text maximum character length**: An integer value (default 128).
+  * **Enable debug logging**: Logs full request/response payloads to the Drupal logs.
 
-  > A template for the AI, with the token `[max_length]` replaced by your max‑length setting.
-* **Alt text maximum character length**
-
-  > Integer value (default 128) that replaces `[max_length]` in your prompt.
-* **Enable debug logging**
-
-  > Logs full request/response payloads when checked. Disable in production.
-
-## Usage
-
-Go to **Configuration » Media » Alt Text Review** (`/admin/content/media/alt-text-review`):
-
-1. The module queries for the first media item of type **Image** where `field_media_image.alt` is empty or NULL.
-2. It **automatically downscales** the image to fit within an 800 × 800 px box (preserving aspect ratio) to limit payload size.
-3. The downscaled image is base64‑encoded and sent, along with your prompt, to the AI.
-4. You see the image plus the AI’s suggested alt text.
-5. Edit or accept the suggestion and **Save alt text**. You’re redirected to the next image without alt text.
+-----
 
 ## How It Works
 
-1. **Discovery**
-   Runs an entity query for `media` bundle `image` where the alt field is empty.
-2. **Downscaling**
-   Uses Drupal’s ImageFactory to load the file and resize it so neither width nor height exceeds 800 px.
-3. **Encoding**
-   Reads the (downscaled) image file, base64‑encodes it, and wraps it in a `data:` URI.
-4. **Prompt Assembly**
-   Injects your max‑length setting into the prompt template.
-5. **API Call**
-   Sends a Chat Completion request to `https://api.openai.com/v1/chat/completions` with:
+1.  **Discovery**: Finds an image media entity with empty alt text.
+2.  **Downscaling**: Resizes the image to fit within an 800×800 px box to reduce payload size.
+3.  **Encoding**: The downscaled image is base64-encoded.
+4.  **API Call**: The request is sent to your configured provider.
+      * **OpenAI**: Sends a request to the Chat Completions API with the `gpt-4o-mini` model.
+      * **Ollama**: Sends a request to your local `/api/generate` endpoint using your configured Ollama model.
+5.  **Review & Save**: The form displays the AI suggestion for you to review, edit, and save.
 
-   * **model**: `gpt-4o-mini`
-   * **messages**:
+-----
 
-     ```json
-     [
-       {
-         "role": "user",
-         "content": [
-           { "type": "text",  "text": "Your prompt here" },
-           { "type": "image_url", "image_url": { "url": "data:image/..." } }
-         ]
-       }
-     ]
-     ```
-   * **max\_tokens**: calculated from your max length.
-6. **Error Handling**
+## Cost & Performance: OpenAI vs. Ollama
 
-   * Missing API key → early error message.
-   * File not found → log and fallback message.
-   * Request failure → log details if debug enabled, show generic error.
-7. **Review & Save**
-   The form lets you tweak or accept the AI suggestion and saves it to the media entity’s `alt` attribute.
+Your choice of provider involves a trade-off between pay-per-use convenience and the upfront/operational cost of self-hosting.
 
-## Model and Pricing
+### OpenAI (`gpt-4o-mini`)
 
-This module uses **GPT‑4o mini**, priced at:
+This is the simplest option, requiring no hardware management. You pay for what you use. The cost is very low, at approximately **$0.0026 per image**. Processing 10,000 images would cost about **$26**.
 
-* **\$0.15 per 1 M input tokens**
-* **\$0.60 per 1 M output tokens**
+### Ollama (Self-Hosted)
 
-Because images are downscaled to 800×800 px, a typical JPEG (\~50 KB) yields about 68 000 base64 characters (≈17 000 tokens). With a 32‑token response, the cost per image is:
+This option is **free of API fees** but requires you to run the model on your own hardware. This is ideal for high-volume processing and enhances data privacy, as images never leave your infrastructure.
 
-```text
-Input cost  = (17 000 / 1 000 000) × $0.15 ≈ $0.00255  
-Output cost = (   32 / 1 000 000) × $0.60 ≈ $0.00002  
-Total ≈ $0.00257 per image
-```
+#### Recommended Vision Models & Hardware
 
-> To further reduce cost, you can lower the downscale dimensions or adjust JPEG quality via your image styles.
+The model you choose depends on the quality you need and the hardware you have available. A GPU is strongly recommended for all but the smallest models.
+
+| Model Name        | Size (Disk) | Min. RAM/VRAM | Best For                                    |
+| ----------------- | ----------- | ------------- | ------------------------------------------- |
+| **`moondream`** | 1.6 GB      | 4 GB          | Fastest, low-resource, basic captions       |
+| **`llava:7b`** | 4.1 GB      | 8 GB          | Good balance of quality and performance     |
+| **`llava:13b`** | 7.4 GB      | 16 GB         | High-quality, detailed descriptions         |
+| **`bakllava`** | 4.1 GB      | 8 GB          | An alternative to `llava:7b`, high performance |
+
+To install a model, run the corresponding command in your terminal, for example: `ollama pull llava:13b`.
+
+#### Cost Analysis
+
+The main ongoing cost is electricity. For a mid-range GPU processing 10,000 images, the total electricity cost is typically **less than $1.00**, representing a significant savings over the OpenAI API at scale.
+
+-----
 
 ## License
 
-GPL‑2.0 or later.
+GPL-2.0

@@ -2,6 +2,7 @@
     "name": "raoeus/drupal-ai-alt-text-generator",
     "description": "Provides AI-generated alt text suggestions for Drupal images using OpenAI",
     "type": "drupal-module",
+    "version": "1.0.1",
     "license": "GPL-2.0-or-later",
     "keywords": ["drupal", "alt-text", "accessibility", "openai"],
     "require": {
@@ -17,9 +18,6 @@
     "extra": {
         "drupal": {
             "module": "alt_text_review"
-        },
-        "branch-alias": {
-            "dev-main": "1.x-dev"
         }
     }
 }
